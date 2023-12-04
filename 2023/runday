@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($argv[1])) {
+    echo 'Missing day number: runday 24' . PHP_EOL;
+
+    return 1;
+}
+
+include __DIR__ . '/day' . $argv[1]. '/index.php';

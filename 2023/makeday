@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+$cookie = 'session=sessionID';
+$year = '2023';
+
+if (!isset($argv[1])) {
+    echo 'Missing day number: makeday 24' . PHP_EOL;
+
+    return 1;
+}
+
+$dir = sprintf('%s/%s%s', __DIR__, 'day', $argv[1]);
+
+if (file_exists($dir)) {
+    echo 'Day already exists' . PHP_EOL;
+
+    return 1;
+}
+
+if (!mkdir($dir)) {
+    echo sprintf('Unable to create the folder %s', $dir) . PHP_EOL;
+
+    return 1;
+}
+
+$indexContent = <<<PHP
+<?php
+
+\$input = sprintf('%s/%s', __DIR__, isset(\$argv[2]) ? 'test.txt' : 'input.txt');
+\$lines = file(\$input);
+
+
+PHP;
+
+$index = file_put_contents(sprintf('%s/%s', $dir, 'index.php'), $indexContent);
+$test = touch(sprintf('%s/%s', $dir, 'test.txt'));
+$context = stream_context_create([
+    'http' => ['header' => sprintf('Cookie: %s', $cookie)]
+]);
+$input = file_put_contents(sprintf('%s/%s', $dir, 'input.txt'), file_get_contents(sprintf('https://adventofcode.com/%s/day/%s/input', $year, $argv[1]), false, $context));
